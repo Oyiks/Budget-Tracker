@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   build: {
-    base: "/Budget-Tracker",
+    base: "/Budget-Tracker/"
     // Other build configuration options...
   },
 })
