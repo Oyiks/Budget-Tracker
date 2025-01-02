@@ -6,7 +6,7 @@ import OptionalCard from './cards/OptionalCard';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import ExpensesModal from "./ExpenseModal";
 
 const Main = styled.main`
@@ -93,6 +93,18 @@ position: relative;
 }
 `;
 
+const Heading2 = styled.h2`
+font-size: 18px;
+font-style: normal;
+font-weight: 400;
+line-height: normal;
+/* margin-top: 5px; */
+margin: 0px;
+text-transform: capitalize;
+color: var(--extras-box-color-light, #FFFDE7);
+
+`;
+
 const H3 = styled.h1`
 font-size: 12px;
 font-style: normal;
@@ -137,6 +149,14 @@ color: white;
 const Paragraph = styled.p`
 color: white;
 `
+
+const ParagraphDescription = styled.p`
+color: white;
+font-size: 12px;
+margin: 0px;
+line-height: 0.1;
+`
+
 const Select = styled.select`
 width: 180px;
 height: 30px;
@@ -185,16 +205,25 @@ const DescriptionText = styled.div`
 }
 `
 
+const ExpenseDescription = styled.div`
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    gap: 10px;
+`
+
 const Cart = styled(BsCart2)`
 width: 84px;
 height: 84px;
 color: white;
 `
 
-function Dashboard() {
+function Dashboard({ expense}) {
 
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
+    const [show, setShow] = useState(false);
+    const ref = useRef(null);
 
     const handleGoBack = () => {
         navigate(-1);
@@ -219,8 +248,33 @@ function Dashboard() {
     //     }
     // `
 
+    const ExpenseDescriptionText = styled.div`
+        
+    `
+
     const Description = styled.div`
 
+    `
+
+    const ExpenseText = styled.div`
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 5px;
+    `
+
+    // const ParagraphAmount = styled.div`
+    //     font-size: 48px;
+    // `
+
+    const ExpenseAmount = styled.div`
+        width: 50%;
+        text-align: right;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
     `
 
     const AddedColor = styled.span`
@@ -234,7 +288,13 @@ function Dashboard() {
     `
 
     const username = useSelector((state) => state.user.username);
-    const handleClose = () => {setShowModal(false)}
+    const amount = useSelector((state) => state.amount.amount);
+    
+    const handleClose = () => {
+        setShowModal(false);
+        setShow(!show);
+        ref.current.remove();
+    }
 
     return (
         <Main>
@@ -282,7 +342,35 @@ function Dashboard() {
             </DescriptionBox> 
             <HR2 />           
 
-                <DescriptionText>
+            <ExpenseDescription>
+            <ExpenseText>
+            {show && <p ref={ref}>
+                    <Image src='/images/ocio.svg'/>
+                     </p>}
+            <ExpenseDescriptionText>
+            {show &&  <p ref={ref}>
+                <Heading2>Hobbie</Heading2>
+                </p>}
+                    {show && <p ref={ref}>
+                        <ParagraphDescription >
+                            Name Expense:{expense} </ParagraphDescription>
+                            </p> }
+                    {show && <p ref={ref}>
+                        <ParagraphDescription>
+                            Date: December 25, 20224 </ParagraphDescription>
+                        </p> }
+            </ExpenseDescriptionText>
+            </ExpenseText>
+
+                <ExpenseAmount>
+                    {show && <p ref={ref}>
+                        <Paragraph>&pound; {amount} </Paragraph>
+                        </p> }
+                </ExpenseAmount>
+            </ExpenseDescription>
+
+            {!show &&
+                <DescriptionText ref={ref}>
                     <H2>Looks like you Havent  Added any  
                     <AddedColor> expenses <br /> yet.</AddedColor></H2>
                     <Paragraph>
@@ -291,7 +379,9 @@ function Dashboard() {
                     </Paragraph>
                     <Cart />
                 </DescriptionText>
+                }
             </Description>
+
 
             {/* <FlexParent> */}
                 <Card />  

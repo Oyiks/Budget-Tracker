@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import { IoIosCloseCircle } from "react-icons/io";
 import Dashboard from "./Dashboard";
-import { useNavigate } from "react-router-dom";
+import { useState} from "react";
+import { useRef } from "react";
+import { updateAmount} from "./Amount"
 import { useDispatch } from "react-redux";
-import { useState } from "react";
-import { updateAmount } from "./Amount";
+import { useNavigate } from "react-router-dom";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -160,10 +161,10 @@ const ClosedButton = styled(IoIosCloseCircle)`
 function ExpensesModal({ showModal, handleClose}) {
 
     const [amount, setAmount] = useState('');
-    const [expenses, setExpenses] = useState('');
-    
+    const [expense, setExpense] = useState('');
+    const expenseRef = useRef();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
-    const dispatch = useDispatch()
 
     const handleAmountChange = (e) => {
         setAmount(e.target.value);
@@ -171,8 +172,8 @@ function ExpensesModal({ showModal, handleClose}) {
     };
 
     const handleExpensesChange = (e) => {
-        setExpenses(e.target.value);
-        console.log(expenses);
+        setExpense(e.target.value);
+        console.log(expense);
     }
 
     const handleSubmit = (e) => {
@@ -180,15 +181,14 @@ function ExpensesModal({ showModal, handleClose}) {
         // Your custom submission logic here
         if(!amount) return null;
         dispatch(updateAmount(amount));
-        navigate('/dashboard')
-        
-        // if(!goals) return null;
-        // dispatch(updateGoals(goals));
+        navigate('/dashboard');
+
+        // if(!expense) return null;
+        // dispatch(updateExpense(expense));
         // navigate('/dashboard')
 
-        // if(!income) return null;
-        // dispatch(updateIncome(income));
-        // navigate('/dashboard')
+        expenseRef.current.expense;
+        
       }
 
     return (
@@ -214,7 +214,7 @@ function ExpensesModal({ showModal, handleClose}) {
                     <Input
                         type='text' 
                         placeholder="Name For Expenses"
-                        value={expenses}
+                        value={expense}
                         onChange={handleExpensesChange}
                     />
                 </div>
@@ -241,7 +241,7 @@ function ExpensesModal({ showModal, handleClose}) {
             </Form>
 
             <ClosedButton   
-                onClick={handleClose}     
+                onClick={handleClose} 
             />
             </Modal>
             {showModal && <Dashboard handleClose={handleClose} />}

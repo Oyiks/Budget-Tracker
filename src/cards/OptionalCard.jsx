@@ -153,7 +153,7 @@ function Cards() {
   return (
     <Card>
       <CardHeader>
-        <H2>Optional</H2>
+        <H2>Optionals</H2>
         <CardLine />
       </CardHeader>
       <CardBody>

@@ -155,11 +155,11 @@ function Homepage() {
         // Your custom submission logic here
         if(!username) return null;
         dispatch(updateName(username));
-        navigate('/dashboard')
+        // navigate('/dashboard')
         
         if(!goals) return null;
         dispatch(updateGoals(goals));
-        navigate('/dashboard')
+        // navigate('/dashboard')
 
         if(!income) return null;
         dispatch(updateIncome(income));

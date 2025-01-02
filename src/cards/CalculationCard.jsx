@@ -3,7 +3,6 @@ import ProgressBar from "../ProgressBar";
 import { useSelector } from 'react-redux';
 import { useNavigate } from "react-router-dom";
 
-
 function Cards() {
 
   const Card = styled.div`
@@ -113,7 +112,7 @@ function Cards() {
   
   const navigate = useNavigate();
   const income = useSelector((state) => state.income.income);
-  const amount = useSelector((state) => state.amount.amount)
+  const amount = useSelector((state) => state.amount.amount);
 
   const handleGoBack = () => {
         navigate('/', { replace: true });
@@ -157,7 +156,7 @@ function Cards() {
       <CardLine />
 
       <CardFooter>
-        <Button onClick={handleGoBack}>Reset Expenses</Button>
+        <Button onClick={handleGoBack} >Reset Expenses</Button>
       </CardFooter>
     </Card>
   )
