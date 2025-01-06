@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    expense: "Medical",
+    expense: "",
 }
 
 const expenseSlice = createSlice({

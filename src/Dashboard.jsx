@@ -6,7 +6,7 @@ import OptionalCard from './cards/OptionalCard';
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
 
-import { useState, useRef } from "react";
+import { useState, useRef} from "react";
 import ExpensesModal from "./ExpenseModal";
 
 const Main = styled.main`
@@ -218,12 +218,18 @@ height: 84px;
 color: white;
 `
 
-function Dashboard({ expense}) {
+function Dashboard() {
 
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
     const [show, setShow] = useState(false);
     const ref = useRef(null);
+    const currentDate = new Date();
+    const day = currentDate.getDate();
+    const month = currentDate.getMonth() + 1;
+    const year = currentDate.getFullYear();
+    const [description, setDescription] = useState([]);
+
 
     const handleGoBack = () => {
         navigate(-1);
@@ -289,11 +295,14 @@ function Dashboard({ expense}) {
 
     const username = useSelector((state) => state.user.username);
     const amount = useSelector((state) => state.amount.amount);
+    const expense = useSelector((state) => state.expense.expense);
+    const category = useSelector((state) => state.category.category);
     
     const handleClose = () => {
         setShowModal(false);
         setShow(!show);
         ref.current.remove();
+        setDescription(description => [...description, ""]);
     }
 
     return (
@@ -342,32 +351,43 @@ function Dashboard({ expense}) {
             </DescriptionBox> 
             <HR2 />           
 
-            <ExpenseDescription>
-            <ExpenseText>
+            <ExpenseDescription >
+            <ExpenseText >
             {show && <p ref={ref}>
                     <Image src='/images/ocio.svg'/>
                      </p>}
             <ExpenseDescriptionText>
             {show &&  <p ref={ref}>
-                <Heading2>Hobbie</Heading2>
+                <Heading2>{category}</Heading2>
                 </p>}
                     {show && <p ref={ref}>
                         <ParagraphDescription >
-                            Name Expense:{expense} </ParagraphDescription>
+                            Name Expense: {expense} </ParagraphDescription>
                             </p> }
                     {show && <p ref={ref}>
-                        <ParagraphDescription>
-                            Date: December 25, 20224 </ParagraphDescription>
+                        <ParagraphDescription> 
+                              Date: {day}-{month}-{year}
+                        </ParagraphDescription>
                         </p> }
             </ExpenseDescriptionText>
             </ExpenseText>
-
+            
                 <ExpenseAmount>
                     {show && <p ref={ref}>
                         <Paragraph>&pound; {amount} </Paragraph>
                         </p> }
                 </ExpenseAmount>
             </ExpenseDescription>
+            { show && <p ref={ref}>
+                <HR2 />
+                </p>
+            }
+
+            {  description.length ? description.map(description => 
+                    <ExpenseDescriptionText 
+                    key={description} description={description}
+                    /> ) : "Nothing to show..."
+            }
 
             {!show &&
                 <DescriptionText ref={ref}>

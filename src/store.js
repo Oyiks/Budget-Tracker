@@ -4,6 +4,7 @@ import goalsReducer from './Goals'
 import incomeReducer from './Income';
 import amountReducer from './Amount'
 import expenseReducer from './expensesName';
+import categoryReducer from './category';
 
 const store = configureStore({
     reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
         income: incomeReducer,
         amount: amountReducer,
         expense: expenseReducer,
+        category: categoryReducer,
     }
 })
 

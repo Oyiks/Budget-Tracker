@@ -2,10 +2,11 @@ import styled from "styled-components";
 import { IoIosCloseCircle } from "react-icons/io";
 import Dashboard from "./Dashboard";
 import { useState} from "react";
-import { useRef } from "react";
 import { updateAmount} from "./Amount"
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { updateExpense } from "./expensesName";
+import { updateCategory } from "./category";
+// import { useNavigate } from "react-router-dom";
 
 const ModalOverlay = styled.div`
   position: fixed;
@@ -53,7 +54,7 @@ const Input = styled.input.attrs({
         margin-bottom: 10px;
 
         @media (max-width: 480px) {
-            color: var(--main-dsrk-main-20, #A3A3A3);
+            color: var(--main-dark-main-20, #A3A3A3);
             font-size: 20.53px;
             font-style: normal;
             font-weight: 400;
@@ -162,9 +163,10 @@ function ExpensesModal({ showModal, handleClose}) {
 
     const [amount, setAmount] = useState('');
     const [expense, setExpense] = useState('');
-    const expenseRef = useRef();
+    const [category, setCategory] = useState('');
+
+    // const navigate = useNavigate();
     const dispatch = useDispatch();
-    const navigate = useNavigate();
 
     const handleAmountChange = (e) => {
         setAmount(e.target.value);
@@ -176,19 +178,23 @@ function ExpensesModal({ showModal, handleClose}) {
         console.log(expense);
     }
 
+    const handleCategory = (e) => {
+        setCategory(e.target.value);
+    }
+
     const handleSubmit = (e) => {
         e.preventDefault(); 
         // Your custom submission logic here
         if(!amount) return null;
         dispatch(updateAmount(amount));
-        navigate('/dashboard');
 
-        // if(!expense) return null;
-        // dispatch(updateExpense(expense));
-        // navigate('/dashboard')
+        if(!expense) return null;
+        dispatch(updateExpense(expense));
 
-        expenseRef.current.expense;
-        
+        if(!category) return null;
+        dispatch(updateCategory(category));
+
+        handleClose();
       }
 
     return (
@@ -220,7 +226,7 @@ function ExpensesModal({ showModal, handleClose}) {
                 </div>
                 
                 <div>
-                <Select name="Expenses">
+                <Select name="Expenses" value={category} onChange={handleCategory}>
                     <Options value="">Select Category</Options>
                     <Options value="All">All</Options>
                     <Options value="Debts">Debts</Options>
@@ -235,7 +241,7 @@ function ExpensesModal({ showModal, handleClose}) {
                 </Select>
                 </div>
                     
-                <Button onClick={handleClose}>
+                <Button onClick={handleSubmit}>
                    Add New Expense
                 </Button>
             </Form>
