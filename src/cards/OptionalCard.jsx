@@ -5,6 +5,8 @@ import { FaAmazon } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa";
 import { useSelector } from 'react-redux';
+import ExpensesModal from "../ExpenseModal";
+import { useState } from "react";
 
 function Cards() {
 
@@ -149,6 +151,11 @@ function Cards() {
   `
 
   const goals = useSelector((state) => state.goals.goals);
+  const [showModal, setShowModal] = useState(false);
+
+  const handleClose = () => {
+        setShowModal(false);
+    }
   
   return (
     <Card>
@@ -165,7 +172,7 @@ function Cards() {
               <Netflix />
             </CircularIcon>
             <Paragraph>NETFLIX</Paragraph>
-            <Button>Select</Button>
+            <Button onClick={() => setShowModal(true)}>Select</Button>
           </ComponentCard>
 
           <ComponentCard>
@@ -173,7 +180,7 @@ function Cards() {
               <Spotify />
             </CircularIcon>
             <Paragraph>SPOTIFY</Paragraph>
-            <Button>Select</Button>
+            <Button onClick={() => setShowModal(true)}>Select</Button>
           </ComponentCard>
           
           <ComponentCard>
@@ -181,7 +188,7 @@ function Cards() {
               <Amazon />
             </CircularIcon>
             <Paragraph>AMAZON</Paragraph>
-            <Button>Select</Button>
+            <Button onClick={() => setShowModal(true)}>Select</Button>
           </ComponentCard>
 
           <ComponentCard>
@@ -189,7 +196,7 @@ function Cards() {
               <Google />
             </CircularIcon>
             <Paragraph>GOOGLE</Paragraph>
-            <Button>Select</Button>
+            <Button onClick={() => setShowModal(true)}>Select</Button>
           </ComponentCard>
 
           <ComponentCard>
@@ -197,7 +204,7 @@ function Cards() {
               <Facebook />
             </CircularIcon>
             <Paragraph>FACEBOOK</Paragraph>
-            <Button>Select</Button>
+            <Button onClick={() => setShowModal(true)}>Select</Button>
           </ComponentCard>
         </InnerCard>
 
@@ -213,6 +220,7 @@ function Cards() {
         </Blockquote>
       </CardFooter>
 
+      {showModal && <ExpensesModal handleClose={handleClose} />}
     </Card>
   )
 }

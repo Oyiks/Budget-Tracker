@@ -1,19 +1,21 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-    expense: "",
-}
-
 const expenseSlice = createSlice({
-    initialState,
+    initialState: {
+        expense: []
+    },
     name: 'expense',
     reducers: {
-        updateExpense(state, action) {
-            state.expense = action.payload;
+        addExpense(state, action) {
+            state.expense = [...state.expense, action.payload]
+        },
+        removeExpense(state, action) {
+           state.expense = state.expense.filter((item) => item.id !== action.payload.id); 
+        
         }
     }
 }) 
 
-export const {updateExpense} = expenseSlice.actions;
+export const {addExpense, removeExpense} = expenseSlice.actions;
 
 export default expenseSlice.reducer; 

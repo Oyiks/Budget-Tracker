@@ -2,10 +2,9 @@ import styled from "styled-components";
 import { IoIosCloseCircle } from "react-icons/io";
 import Dashboard from "./Dashboard";
 import { useState} from "react";
-import { updateAmount} from "./Amount"
 import { useDispatch } from "react-redux";
-import { updateExpense } from "./expensesName";
-import { updateCategory } from "./category";
+import { addExpense } from "./expensesName";
+import { v4 as uuidv4 } from 'uuid';
 // import { useNavigate } from "react-router-dom";
 
 const ModalOverlay = styled.div`
@@ -185,14 +184,13 @@ function ExpensesModal({ showModal, handleClose}) {
     const handleSubmit = (e) => {
         e.preventDefault(); 
         // Your custom submission logic here
-        if(!amount) return null;
-        dispatch(updateAmount(amount));
-
-        if(!expense) return null;
-        dispatch(updateExpense(expense));
-
-        if(!category) return null;
-        dispatch(updateCategory(category));
+        
+        dispatch(addExpense({
+            amount: amount,
+            category: category,
+            expense: expense,
+            id: uuidv4() 
+        }));
 
         handleClose();
       }

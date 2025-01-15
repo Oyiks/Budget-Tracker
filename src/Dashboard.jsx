@@ -4,19 +4,22 @@ import Card from './cards/CalculationCard';
 import { BsCart2 } from "react-icons/bs";
 import OptionalCard from './cards/OptionalCard';
 import { useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { MdEdit } from "react-icons/md";
+import { MdDeleteForever } from "react-icons/md";
 
-import { useState, useRef} from "react";
+import { removeExpense } from "./expensesName";
+import { useState, useRef } from "react";
 import ExpensesModal from "./ExpenseModal";
 
 const Main = styled.main`
-padding: 10px 25px;
-background-color: black;
+    padding: 10px 25px;
+    background-color: black;
+    @media (max-width: 768px) {
+        padding: 32px;
+    }
+`;
 
-@media (max-width: 768px) {
-    padding: 32px;
-}
-`
 
 const Navbar = styled.nav`
 display: flex;
@@ -210,6 +213,8 @@ const ExpenseDescription = styled.div`
     justify-content: space-evenly;
     align-items: center;
     gap: 10px;
+    cursor: pointer;
+    position: relative;
 `
 
 const Cart = styled(BsCart2)`
@@ -218,42 +223,37 @@ height: 84px;
 color: white;
 `
 
-function Dashboard() {
+const Edit = styled(MdEdit)`
+width: 28px;
+height: 28px;
+color: lightgreen;
+cursor: pointer;
+`
 
+const DeleteForever = styled(MdDeleteForever)`
+width: 28px;
+height: 28px;
+color: red;
+cursor: pointer;
+`
+
+// Other styled components here...
+
+function Dashboard() {
     const navigate = useNavigate();
     const [showModal, setShowModal] = useState(false);
-    const [show, setShow] = useState(false);
+    const [hoveredExpenseId, setHoveredExpenseId] = useState(null); // Track hovered expense
     const ref = useRef(null);
     const currentDate = new Date();
     const day = currentDate.getDate();
     const month = currentDate.getMonth() + 1;
     const year = currentDate.getFullYear();
-    const [description, setDescription] = useState([]);
-
 
     const handleGoBack = () => {
         navigate(-1);
     };
 
-    // const FlexParent = styled.div`
-
-    //     display: grid;
-    //     grid-template-columns: 1fr;
-
-    //     @media (max-width: 768px) {
-    //         display: flex;
-    //         align-items: center;
-    //         gap: 20px;
-    //         margin-top: 30px;
-    //     }
-
-    //     @media (max-width: 480px) {
-    //         display: block;
-    //         align-items: center;
-    //         width: 100%;
-    //     }
-    // `
-
+    
     const ExpenseDescriptionText = styled.div`
         
     `
@@ -293,126 +293,151 @@ function Dashboard() {
         color: white;
     `
 
+    const DescriptionButton = styled.button`
+        width: 500px;
+        height: 60px;
+        background-color: FFFDE7;
+        align-items: center;
+        margin: auto;
+        padding: auto;
+        align-content: center;
+        position: absolute;
+        top: 10px;
+        left: 55px;
+        z-index: 100;
+    `
+
     const username = useSelector((state) => state.user.username);
-    const amount = useSelector((state) => state.amount.amount);
     const expense = useSelector((state) => state.expense.expense);
-    const category = useSelector((state) => state.category.category);
-    
+    const dispatch = useDispatch();
+
+    const handleDeleteItem = (itemId) => {
+        dispatch(removeExpense({id: itemId}));
+    };
+
     const handleClose = () => {
         setShowModal(false);
-        setShow(!show);
         ref.current.remove();
-        setDescription(description => [...description, ""]);
-    }
+    };
+
+    const handleMouseEnter = (id) => {
+        setHoveredExpenseId(id);
+    };
+
+    const handleMouseLeave = () => {
+        setHoveredExpenseId(null);
+    };
 
     return (
         <Main>
-        <Navbar>
-
-            <NavLeft>
-                <Image src='/images/Vector.png' 
-                onClick={handleGoBack}
-                />    
+            <Navbar>
+                <NavLeft>
+                    <Image
+                        src='/images/Vector.png'
+                        onClick={handleGoBack}
+                    />
                     <span>
                         <H3>Expenses</H3>
                         <H1>Monthly <AddedColor>Budget</AddedColor></H1>
                     </span>
-            </NavLeft>            
-    
-            <NavRight>
-                <p to="/dashboard">
-                    <span><User /></span>
-                    Welcome {username} 🖐
-                </p>
-                <ExpensesButton onClick={() => setShowModal(true)}>
-                    New Expenses
-                </ExpensesButton>
-            </NavRight>
-        </Navbar>
-        <HR />
+                </NavLeft>
 
-        <Section>
-            <Description>
-            <DescriptionBox>
-                <Paragraph>Description</Paragraph>
-                <Select name="Filter_expenses">
-                    <Options value="0">Filter Expenses |</Options>
-                    <Options value="All">All</Options>
-                    <Options value="Debts">Debts</Options>
-                    <Options value="Food">Food</Options>
-                    <Options value="All">All</Options>
-                    <Options value="Hobbie">Hobbie</Options>
-                    <Options value="Rent">Rent</Options>
-                    <Options value="Savings">Savings</Options>
-                    <Options value="Medicine">Medicine</Options>
-                    <Options value="Subscription">Subscription</Options>
-                    <Options value="Various">Various</Options>
-                </Select>
-            </DescriptionBox> 
-            <HR2 />           
+                <NavRight>
+                    <p to="/dashboard">
+                        <span><User /></span>
+                        Welcome {username} 🖐
+                    </p>
+                    <ExpensesButton onClick={() => setShowModal(true)}>
+                        New Expenses
+                    </ExpensesButton>
+                </NavRight>
+            </Navbar>
+            <HR />
 
-            <ExpenseDescription >
-            <ExpenseText >
-            {show && <p ref={ref}>
-                    <Image src='/images/ocio.svg'/>
-                     </p>}
-            <ExpenseDescriptionText>
-            {show &&  <p ref={ref}>
-                <Heading2>{category}</Heading2>
-                </p>}
-                    {show && <p ref={ref}>
-                        <ParagraphDescription >
-                            Name Expense: {expense} </ParagraphDescription>
-                            </p> }
-                    {show && <p ref={ref}>
-                        <ParagraphDescription> 
-                              Date: {day}-{month}-{year}
-                        </ParagraphDescription>
-                        </p> }
-            </ExpenseDescriptionText>
-            </ExpenseText>
-            
-                <ExpenseAmount>
-                    {show && <p ref={ref}>
-                        <Paragraph>&pound; {amount} </Paragraph>
-                        </p> }
-                </ExpenseAmount>
-            </ExpenseDescription>
-            { show && <p ref={ref}>
-                <HR2 />
-                </p>
-            }
+            <Section>
+                <Description>
+                    <DescriptionBox>
+                        <Paragraph>Description</Paragraph>
+                        <Select name="Filter_expenses">
+                            <Options value="0">Filter Expenses |</Options>
+                            <Options value="All">All</Options>
+                            <Options value="Debts">Debts</Options>
+                            <Options value="Food">Food</Options>
+                            <Options value="Hobbie">Hobbie</Options>
+                            <Options value="Rent">Rent</Options>
+                            <Options value="Savings">Savings</Options>
+                            <Options value="Medicine">Medicine</Options>
+                            <Options value="Subscription">Subscription</Options>
+                            <Options value="Various">Various</Options>
+                        </Select>
+                    </DescriptionBox>
+                    <HR2 />
 
-            {  description.length ? description.map(description => 
-                    <ExpenseDescriptionText 
-                    key={description} description={description}
-                    /> ) : "Nothing to show..."
-            }
+                    {/* Render Expenses */}
+                    {expense.length === 0 ? (
+                        <DescriptionText ref={ref}>
+                            <H2>Looks like you haven&apos;t added any
+                                <AddedColor> expenses <br /> yet.</AddedColor>
+                            </H2>
+                            <Paragraph>
+                                No worries, Just Hit The
+                                <AddedColor> Add</AddedColor> Button To Get Started
+                            </Paragraph>
+                            <Cart />
+                        </DescriptionText>
+                    ) : (
+                        expense.map((expenseItem) => (
+                            <ExpenseDescription
+                                key={expenseItem.id}
+                                onMouseEnter={() => handleMouseEnter(expenseItem.id)}
+                                onMouseLeave={handleMouseLeave}
+                            >
+                                <ExpenseText>
+                                    <p ref={ref}>
+                                        <Image src='/images/ocio.svg' />
+                                    </p>
+                                    <ExpenseDescriptionText>
+                                        <p ref={ref}>
+                                            <Heading2>{expenseItem.category}</Heading2>
+                                        </p>
+                                        <p ref={ref}>
+                                            <ParagraphDescription>
+                                                Name Expense: {expenseItem.expense}
+                                            </ParagraphDescription>
+                                        </p>
+                                        <p ref={ref}>
+                                            <ParagraphDescription>
+                                                Date: {day}-{month}-{year}
+                                            </ParagraphDescription>
+                                        </p>
+                                    </ExpenseDescriptionText>
+                                </ExpenseText>
 
-            {!show &&
-                <DescriptionText ref={ref}>
-                    <H2>Looks like you Havent  Added any  
-                    <AddedColor> expenses <br /> yet.</AddedColor></H2>
-                    <Paragraph>
-                        No worries, Just Hit The 
-                        <AddedColor> Add</AddedColor> Button To Get Started
-                    </Paragraph>
-                    <Cart />
-                </DescriptionText>
-                }
-            </Description>
+                                <ExpenseAmount>
+                                    <p ref={ref}>
+                                        <Paragraph>&pound; {expenseItem.amount}</Paragraph>
+                                    </p>
+                                </ExpenseAmount>
 
+                                {/* Show Edit/Delete only if hovered */}
+                                {hoveredExpenseId === expenseItem.id && (
+                            <DescriptionButton>
+                                EDIT <Edit />
+                                DELETE <DeleteForever onClick={() => handleDeleteItem(expenseItem.id)}/>
+                            </DescriptionButton>
+                                            )}
+                            </ExpenseDescription>
+                        ))
+                    )}
+                </Description>
 
-            {/* <FlexParent> */}
-                <Card />  
+                <Card />
                 <OptionalCard />
-            {/* </FlexParent>   */}
-        </Section>
+            </Section>
 
-        {showModal && <ExpensesModal handleClose={handleClose} />}
-
+            {showModal && <ExpensesModal handleClose={handleClose} />}
         </Main>
-    )
+    );
 }
 
 export default Dashboard;

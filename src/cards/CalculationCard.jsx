@@ -113,6 +113,7 @@ function Cards() {
   const navigate = useNavigate();
   const income = useSelector((state) => state.income.income);
   const amount = useSelector((state) => state.amount.amount);
+  /* const expense = useSelector((state) => state.expense.expense)      */
 
   const handleGoBack = () => {
         navigate('/', { replace: true });
