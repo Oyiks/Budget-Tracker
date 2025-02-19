@@ -1,10 +1,11 @@
 import styled from "styled-components";
 import { IoIosCloseCircle } from "react-icons/io";
-import Dashboard from "./Dashboard";
-import { useState} from "react";
+import { useEffect, useState} from "react";
 import { useDispatch } from "react-redux";
-import { addExpense } from "./expensesName";
+import { addExpense} from "./expensesName";
 import { v4 as uuidv4 } from 'uuid';
+import { editItem } from './expensesName';
+import { updateAmount } from './Amount';
 // import { useNavigate } from "react-router-dom";
 
 const ModalOverlay = styled.div`
@@ -158,51 +159,80 @@ const ClosedButton = styled(IoIosCloseCircle)`
         cursor: pointer;
     `
 
-function ExpensesModal({ showModal, handleClose}) {
+function ExpensesModal({ showModal, handleClose, expenseToEdit}) {
 
     const [amount, setAmount] = useState('');
-    const [expense, setExpense] = useState('');
     const [category, setCategory] = useState('');
-
-    // const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const handleAmountChange = (e) => {
-        setAmount(e.target.value);
-        console.log(amount);
-    };
+    const [newExpenseName, setNewExpenseName] = useState(expenseToEdit?.expense || '');
 
-    const handleExpensesChange = (e) => {
-        setExpense(e.target.value);
-        console.log(expense);
-    }
+    // const handleChange = (e) => {
+    //     setUpdatedExpense(e.target.value);
+    // };
 
-    const handleCategory = (e) => {
-        setCategory(e.target.value);
-    }
+    // const handleSave = () => {
+    //     if (newExpenseName.trim() && expenseToEdit) {
+    //         dispatch(editItem({ 
+    //             id: expenseToEdit.id, 
+    //             updatedItem: { expense: newExpenseName, amount, category } }));
+    //         handleClose(); // Close the modal after saving
+    //     }
+    // };
+
+    useEffect(() => {
+        if (expenseToEdit) {
+            setAmount(expenseToEdit.amount);
+            setCategory(expenseToEdit.category);
+        }
+    }, [expenseToEdit]);
+
+    if (!showModal) return null;
+
+    const handleAmountChange = (e) => setAmount(e.target.value);
+    const handleExpensesChange = (e) => setNewExpenseName(e.target.value);
+
+    const handleCategory = (e) => setCategory(e.target.value);
 
     const handleSubmit = (e) => {
         e.preventDefault(); 
-        // Your custom submission logic here
         
-        dispatch(addExpense({
-            amount: amount,
-            category: category,
-            expense: expense,
-            id: uuidv4() 
-        }));
+        // Validation
+        if (!amount || !newExpenseName || !category) {
+            alert('Please fill in all fields.');
+            return;
+        }
 
-        handleClose();
-      }
+        // If we are editing an existing expense
+        if (expenseToEdit) {
+            dispatch(editItem({
+                id: expenseToEdit.id,
+                updatedItem: { expense: newExpenseName, amount, category },
+            }));
+        } else {
+            // If we are adding a new expense
+            dispatch(addExpense({
+                amount: amount,
+                category: category,
+                expense: newExpenseName,
+                id: uuidv4(),
+            }));
+        }
+
+        dispatch(updateAmount(amount));
+
+        handleClose();  // Close the modal after submission
+    };
 
     return (
+        showModal && (
         <ModalOverlay>
             <Modal>
             <H1>MONTHLY <br /> 
             <AddedColor>BUDGET</AddedColor></H1>
             <Paragraph>
-                Insert Below Your Current Spent
-            </Paragraph>
+                {expenseToEdit ? 'Edit Your Expense' : 'Insert Below Your Current Spent'} 
+             </Paragraph>
             <Form onSubmit={handleSubmit}>
                 <div>
                     {/* <label>Insert The Amount</label> */}
@@ -218,7 +248,7 @@ function ExpensesModal({ showModal, handleClose}) {
                     <Input
                         type='text' 
                         placeholder="Name For Expenses"
-                        value={expense}
+                        value={newExpenseName}
                         onChange={handleExpensesChange}
                     />
                 </div>
@@ -239,18 +269,17 @@ function ExpensesModal({ showModal, handleClose}) {
                 </Select>
                 </div>
                     
-                <Button onClick={handleSubmit}>
-                   Add New Expense
+                <Button type="submit">
+                    {expenseToEdit ? 'Save Changes' : 'Add New Expense'}
                 </Button>
             </Form>
 
-            <ClosedButton   
-                onClick={handleClose} 
-            />
+            <ClosedButton onClick={handleClose} />
             </Modal>
-            {showModal && <Dashboard handleClose={handleClose} />}
+            {/* {showModal && <Dashboard handleClose={handleClose} />} */}
         </ModalOverlay>
-    )
+        )
+    );
 }
 
 export default ExpensesModal;

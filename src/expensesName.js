@@ -11,11 +11,17 @@ const expenseSlice = createSlice({
         },
         removeExpense(state, action) {
            state.expense = state.expense.filter((item) => item.id !== action.payload.id); 
-        
+        },
+        editItem: (state, action) => {
+            const { id, updatedItem } = action.payload;
+            const index = state.expense.findIndex(item => item.id === id);
+            if (index !== -1) {
+              state.expense[index] = { ...state.expense[index], ...updatedItem };
         }
-    }
-}) 
+      },
+    },
+});
 
-export const {addExpense, removeExpense} = expenseSlice.actions;
+export const {addExpense, removeExpense, editItem} = expenseSlice.actions;
 
 export default expenseSlice.reducer; 

@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    amount: "",
+    amount: 0,
 }
 
 const amountSlice = createSlice({
@@ -9,7 +9,7 @@ const amountSlice = createSlice({
     name: 'amount',
     reducers: {
         updateAmount(state, action) {
-            state.amount = action.payload;
+            state.amount += Number(action.payload);
         }
     }
 }) 

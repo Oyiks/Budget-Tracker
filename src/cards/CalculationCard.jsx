@@ -79,6 +79,7 @@ function Cards() {
     gap: 10px;
     align-items: center;
     justify-content: stretch;
+    flex-grow: 1;
   `
 
   const H2 = styled.h2`
@@ -113,6 +114,7 @@ function Cards() {
   const navigate = useNavigate();
   const income = useSelector((state) => state.income.income);
   const amount = useSelector((state) => state.amount.amount);
+  /* const prog = useSelector((state) => state.budget.progress); */
   /* const expense = useSelector((state) => state.expense.expense)      */
 
   const handleGoBack = () => {
@@ -134,17 +136,18 @@ function Cards() {
         </CardText>
 
        <ProgressBar 
-        progress={0}
+        progress={((income - amount) / income) * 100}
         size={180}
         strokeWidth={13}
         circleOneStroke='#D2D2D2'
         circleTwoStroke='#D2D2D2'
        />
+
         <FlexChild>
           <AvailableExpenses>
             <H4>AVAILABLE</H4>
             <Paragraph>
-            <AddedColor>&pound;{income}.00</AddedColor></Paragraph>
+            <AddedColor>&pound;{income - amount}.00</AddedColor></Paragraph>
           </AvailableExpenses>
 
           <Spent>

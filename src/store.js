@@ -6,6 +6,7 @@ import incomeReducer from './Income';
 import expenseReducer from './expensesName';
 import amountReducer from './Amount';
 import categoryReducer from './category'
+import budgetReducer from './progress';
 
 const store = configureStore({ 
     reducer: {
@@ -15,6 +16,7 @@ const store = configureStore({
         expense: expenseReducer,
         amount: amountReducer,
         category: categoryReducer,
+        budget: budgetReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger)
 })

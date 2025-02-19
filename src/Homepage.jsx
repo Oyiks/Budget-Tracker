@@ -5,14 +5,15 @@ import { updateName } from './users';
 import { useDispatch } from 'react-redux';
 import { updateGoals } from './Goals';
 import { updateIncome } from './Income';
+// import { updateProgress } from './progress';
 
 const Input = styled.input.attrs({
     type: 'text',
-})` 
+})`
     padding: 10px 20px;
-    margin: 0px 0;
+    margin: 0px 0;                      
     width: 472px;
-    box-sizing: border-box;  
+    box-sizing: border-box;
     border: none;
     border-bottom: 2px solid white;
     display: inline-block;
@@ -47,6 +48,7 @@ const Input = styled.input.attrs({
         height: auto;
         flex-shrink: 0;
         margin-top: 48px;
+        overflow: hidden;
     }
 `
 
@@ -62,9 +64,10 @@ const Button = styled.button`
         padding: 17px 88px 16px 88px;
         border-radius: 2.738px;
         background: var(--complementaries-compl-opt1, #FFE600);
-        display: inline-flex;
+        /* display: inline-flex; */
         justify-content: center;
         align-items: center;
+
     }
 `
 
@@ -74,6 +77,18 @@ const Main = styled.main`
     justify-content: center;
     vertical-align: baseline;
     height: 100vh;
+    overflow: hidden;
+
+    @media (max-width: 480px) {
+        overflow: hidden;
+        padding: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        /* overflow-y: hidden; */
+        width: 100%;
+    }
 `
 
 const Form = styled.form`
@@ -81,7 +96,7 @@ const Form = styled.form`
     width: 50%;
     height: 100vh;
     padding: 10px 120px 20px 120px;
-    
+
     justify-content: center;
     align-items: center;
     background-color: var(--main-dsrk-base, #1E1E1E);
@@ -126,45 +141,76 @@ const Image = styled.img`
 const AddedColor = styled.span`
     color: #51D289;
 `
- 
+
+const ErrorText = styled.p`
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+`;
+
 function Homepage() {
-       
     const [income, setIncome] = useState('');
     const [username, setUsername] = useState('');
     const [goals, setGoals] = useState('');
+    const [error, setError] = useState('');
     const navigate = useNavigate();
     const dispatch = useDispatch()
 
     const handleIncomeChange = (e) => {
         setIncome(e.target.value);
-        console.log(income);
     };
 
     const handleNameChange = (e) => {
         setUsername(e.target.value);
-        console.log(username);
     }
     
     const handleGoalChange = (e) => {
         setGoals(e.target.value);
-        console.log(goals);
+    }
+
+    const validateForm = () => {
+        // Check if all fields are filled
+        if (!username || !goals || !income) {
+            setError('All fields are required!');
+            return false;
+        }
+
+        // Validate income is a valid number
+        if (isNaN(income)) {
+            setError('Income must be a valid number!');
+            return false;
+        }
+
+        // Validate username contains only letters and spaces (no numbers, special characters)
+        const nameRegex = /^[A-Za-z\s]+$/; // Only alphabet and spaces
+        if (!nameRegex.test(username)) {
+            setError('Name must contain only letters and spaces!');
+            return false;
+        }
+
+        setError('');
+        return true;
     }
 
     const handleSubmit = (e) => {
-        e.preventDefault(); 
-        // Your custom submission logic here
-        if(!username) return null;
-        dispatch(updateName(username));
-        // navigate('/dashboard')
-        
-        if(!goals) return null;
-        dispatch(updateGoals(goals));
-        // navigate('/dashboard')
+        e.preventDefault();
 
-        if(!income) return null;
+        // Run validation before submitting
+        if (!validateForm()) {
+            return;
+        }
+
+        // Dispatch actions if form is valid
+        dispatch(updateName(username));
+        dispatch(updateGoals(goals));
         dispatch(updateIncome(income));
+
+        // const progress = 50;
+
+
+        // Navigate after successful submission
         navigate('/dashboard')
-      }
+    }
 
     return (
         <>
@@ -193,7 +239,10 @@ function Homepage() {
             onChange={handleGoalChange}
             />
 
-            <Button >
+            {/* Display error message if any */}
+            {error && <ErrorText>{error}</ErrorText>}
+
+            <Button>
                 Start Your Calculation
             </Button>
         </div>

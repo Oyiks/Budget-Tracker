@@ -9,6 +9,7 @@ import { MdEdit } from "react-icons/md";
 import { MdDeleteForever } from "react-icons/md";
 
 import { removeExpense } from "./expensesName";
+
 import { useState, useRef } from "react";
 import ExpensesModal from "./ExpenseModal";
 
@@ -224,17 +225,19 @@ color: white;
 `
 
 const Edit = styled(MdEdit)`
-width: 28px;
-height: 28px;
+width: 20px;
+height: 20px;
 color: lightgreen;
 cursor: pointer;
+align-items: center;
 `
 
 const DeleteForever = styled(MdDeleteForever)`
-width: 28px;
-height: 28px;
+width: 20px;
+height: 20px;
 color: red;
 cursor: pointer;
+align-items: center;
 `
 
 // Other styled components here...
@@ -244,6 +247,8 @@ function Dashboard() {
     const [showModal, setShowModal] = useState(false);
     const [hoveredExpenseId, setHoveredExpenseId] = useState(null); // Track hovered expense
     const ref = useRef(null);
+    const [ newName, setNewName ] = useState('');
+    const [expenseToEdit, setExpenseToEdit] = useState(null);
     const currentDate = new Date();
     const day = currentDate.getDate();
     const month = currentDate.getMonth() + 1;
@@ -294,8 +299,8 @@ function Dashboard() {
     `
 
     const DescriptionButton = styled.button`
-        width: 500px;
-        height: 60px;
+        width: 520px;
+        height: 69px;
         background-color: FFFDE7;
         align-items: center;
         margin: auto;
@@ -303,7 +308,7 @@ function Dashboard() {
         align-content: center;
         position: absolute;
         top: 10px;
-        left: 55px;
+        left: 45px;
         z-index: 100;
     `
 
@@ -317,7 +322,8 @@ function Dashboard() {
 
     const handleClose = () => {
         setShowModal(false);
-        ref.current.remove();
+        // ref.current.remove();
+        setNewName('');
     };
 
     const handleMouseEnter = (id) => {
@@ -326,6 +332,12 @@ function Dashboard() {
 
     const handleMouseLeave = () => {
         setHoveredExpenseId(null);
+    };
+
+    const handleEditItem = (expenseItem) => {
+        setExpenseToEdit(expenseItem);
+        setShowModal(true);
+        setNewName(expenseItem.expense);
     };
 
     return (
@@ -422,7 +434,7 @@ function Dashboard() {
                                 {/* Show Edit/Delete only if hovered */}
                                 {hoveredExpenseId === expenseItem.id && (
                             <DescriptionButton>
-                                EDIT <Edit />
+                                EDIT <Edit onClick={() => handleEditItem(expenseItem)}/>
                                 DELETE <DeleteForever onClick={() => handleDeleteItem(expenseItem.id)}/>
                             </DescriptionButton>
                                             )}
@@ -435,7 +447,14 @@ function Dashboard() {
                 <OptionalCard />
             </Section>
 
-            {showModal && <ExpensesModal handleClose={handleClose} />}
+            {showModal && (
+                <ExpensesModal 
+                    showModal={showModal} 
+                    handleClose={handleClose} 
+                    expenseToEdit={expenseToEdit}
+                    newName={newName}
+                    setNewName={setNewName} 
+                    />)}
         </Main>
     );
 }
